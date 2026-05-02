@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const {Schema} = mongoose
 
 let registrationSchema = new Schema ({
-    
+
     userName:{
         type: String,
         required: true,
@@ -22,6 +22,17 @@ let registrationSchema = new Schema ({
         max: [10, "To high"],
         // match: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/, 'Password must be at least 8 characters and include uppercase, lowercase, and a number']
 
+    },
+    isLogin:{
+        type: Boolean,
+        default: false
+    },
+    isHold:{
+        type: Boolean,
+        default: false
+    },
+    photo:{
+        type: String
     }
 })
 

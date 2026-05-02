@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-const registrationController = require('./controller/registrationController')
+const {registrationController, loginController, LogoutController} = require('./controller/registrationController')
 const dbConnection = require('./config/dbConnection')
 const app = express()
 
@@ -11,6 +11,9 @@ dbConnection()
 
 app.post('/registration', registrationController)
 
+app.post('/login', loginController)
+
+app.post('/logout', LogoutController)
 
 app.listen(port, (req, res) => {
     console.log(`Server is running on port ${port}`);    
