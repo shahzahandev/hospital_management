@@ -46,62 +46,62 @@ let registrationController = async (req, res) => {
 let loginController = async (req, res) => {
     let { email, password } = req.body
 
-try {
+    try {
         const existingUser = await User.findOne({ email: email })
-// if user not avaiable
-    if (!existingUser) {
+        // if user not avaiable
+        if (!existingUser) {
+            return res.send({
+                success: false,
+                message: "User not found."
+            })
+        }
+        // if user login already
+        if (existingUser.isLogin == true) {
+            return res.send({
+                success: false,
+                message: "Logout from another device."
+            })
+        }
+        // password matching
+        let pass = bcrypt.compareSync(password, existingUser.password)
+        // login proccess
+        if (pass) {
+            existingUser.isLogin = true
+            existingUser.save()
+            return res.send({
+                success: true,
+                message: "Login successfully done."
+            })
+        } else {
+            return res.send({
+                success: false,
+                message: "Invalid Credencial."
+            })
+        }
+    } catch (error) {
         return res.send({
-            success: false,
-            message: "User not found."
-        })
-    }
-// if user login already
-    if(existingUser.isLogin == true){
-        return res.send({
-            success: false,
-            message: "Logout from another device."
-        })
-    }
-// password matching
-    let pass = bcrypt.compareSync(password, existingUser.password)
-// login proccess
-    if (pass) {
-        existingUser.isLogin = true
-        existingUser.save()
-        return res.send({
-            success: true,
-            message: "Login successfully done."
-        })
-    } else {
-        return res.send({
-            success: false,
-            message: "Invalid Credencial."
-        })
-    }
-} catch (error) {
-      return res.send({
             success: false,
             message: "Server error."
         })
-}
+    }
 }
 
-let LogoutController = async(req, res) => {
-    let {id} = req.body
+let LogoutController = async (req, res) => {
+    let { id } = req.body
     try {
-         const existingUser = await User.findOne({_id: id})
-       existingUser.isLogin = false
-       existingUser.save()
-       return res.send({
-         success: true,
-         message: "Logout successfully done."
-       })
+        const existingUser = await User.findOne({ _id: id })
+        existingUser.isLogin = false
+        existingUser.save()
+        return res.send({
+            success: true,
+            message: "Logout successfully done."
+        })
     } catch (error) {
-          return res.send({
-         success: false,
-         message: "Server error."
-       }) 
+        return res.send({
+            success: false,
+            message: "Server error."
+        })
     }
-    }
+}
 
 module.exports = { registrationController, loginController, LogoutController }

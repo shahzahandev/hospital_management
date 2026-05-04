@@ -27,10 +27,6 @@ let registrationSchema = new Schema ({
         type: Boolean,
         default: false
     },
-    isHold:{
-        type: Boolean,
-        default: false
-    },
     photo:{
         type: String
     }
