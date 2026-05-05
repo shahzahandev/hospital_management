@@ -17,7 +17,7 @@ let patientProfileController = async (req, res) => {
         let ranNum = Date.now().toString()
         let id = firstLetter + ranNum.slice(-4)
 
-        let profile = new PatientProfile({
+        let profile = await new PatientProfile({
             user: user,
             email: email,
             patientId: id,
@@ -29,7 +29,8 @@ let patientProfileController = async (req, res) => {
 
         return res.send({
             success: true,
-            message: `Profile created successfully done.`
+            message: `Profile created successfully done.`,
+            info: profile
         })
     } catch (error) {
         return res.send({
@@ -94,4 +95,72 @@ let setHoldProfile = async (req, res) => {
     }
 }
 
-module.exports = { patientProfileController, getAllProfile, singleProfile, setHoldProfile }
+let deleteProfile = async (req, res) => {
+    let { id } = req.body
+    try {
+        let deleteUser = await PatientProfile.findByIdAndDelete({ _id: id })
+        return res.send({
+            success: true,
+            message: `Profile deleted successfully.`
+        })
+    } catch (error) {
+        return res.send({
+            success: false,
+            message: `Server error.`,
+            error: error
+        })
+    }
+}
+
+let updateProfile = async (req, res) => {
+    let { id } = req.params
+    try {
+        let updateUser = await PatientProfile.findByIdAndUpdate({ _id: id }, req.body, { new: true })
+        return res.send({
+            success: true,
+            message: `Profile update successfully.`
+        })
+    } catch (error) {
+        return res.send({
+            success: false,
+            message: "Server error.",
+            error: error
+        })
+    }
+}
+
+let allProfileWithoutHold = async (req, res) => {
+    try {
+        let data = await PatientProfile.find({ isHold: { $ne: true } })
+        return res.send({
+            success: true,
+            message: 'all Profile without Hold.',
+            data: data
+        })
+    } catch (error) {
+        return res.send({
+            success: false,
+            message: "Server error.",
+            error: error
+        })
+    }
+}
+
+let getHoldProfile = async (req, res) => {
+    try {
+        let data = await PatientProfile.find({ isHold: { $eq: true } })
+        return res.send({
+            success: true,
+            message: 'All hold profile.',
+            data: data
+        })
+    } catch (error) {
+        return res.send({
+            success: false,
+            message: "Server error.",
+            error: error
+        })
+    }
+}
+
+module.exports = { patientProfileController, getAllProfile, singleProfile, setHoldProfile, deleteProfile, updateProfile, allProfileWithoutHold, getHoldProfile }
